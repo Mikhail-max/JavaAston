@@ -53,6 +53,7 @@ public class programm {
 
         System.out.println("\n--- Отправка сообщений после авторизации ---");
         proxyChatBot.sendMessage(":)");
+
         proxyChatBot.sendMessage("пока!");
         proxyChatBot.sendMessage("как дела?");
 
