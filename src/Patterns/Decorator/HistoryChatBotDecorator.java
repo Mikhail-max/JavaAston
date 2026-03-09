@@ -21,8 +21,7 @@ public class HistoryChatBotDecorator extends ChatBotDecorator {
         // Делегируем обработку реальному объекту
         wrappedBot.sendMessage(message);
 
-        // После обработки получаем ответ (это упрощённая логика — в реальности нужно перехватывать вывод)
-        // В данном случае мы просто отмечаем факт обработки
+
         messageHistory.add("ВЫХОД: Обработано");
     }
 

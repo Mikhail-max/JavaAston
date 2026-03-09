@@ -1,5 +1,7 @@
 package Patterns;
 
+import Patterns.Adapter.AIModuleAdapter;
+import Patterns.Adapter.AdvancedAIModule;
 import Patterns.Builder.BirdsBuilders;
 import Patterns.Builder.BirdsEngineer;
 import Patterns.Builder.BirdsInterface;
@@ -31,9 +33,8 @@ public class programm {
         BirdsEngineer engineer = new BirdsEngineer(builder);
         Birds birds = engineer.createBirds("Kokosik", "Blue", 4);
         System.out.println(birds);
-        //Реализовываем Цепочку обязанностей +Прокси+Декоратор
+        //Реализовываем Цепочку обязанностей +Прокси+Декоратор+Адаптер на основе условного чат бота
 
-        // Создаём цепочку обработчиков (как раньше)
         MessageHandler emojiHandler = new EmojiHandler();
         MessageHandler greetingHandler = new GreetingHandler();
         MessageHandler goodbyeHandler = new GoodbyeHandler();
@@ -43,21 +44,26 @@ public class programm {
         greetingHandler.setNext(goodbyeHandler);
         goodbyeHandler.setNext(defaultHandler);
 
-        // Создаём реальный чат‑бот
+
         ChatBot realChatBot = new ChatBot(emojiHandler);
 
-        // Создаём прокси‑объект
+
         SecureChatBotProxy proxyChatBot = new SecureChatBotProxy(realChatBot);
 
-        // Применяем декораторы: сначала цензура, затем история
+
+        AdvancedAIModule externalAIModule = new AdvancedAIModule();
+
+
         ChatBotInterface decoratedBot = new HistoryChatBotDecorator(
-                new CensorChatBotDecorator(proxyChatBot)
+                new CensorChatBotDecorator(
+                        new AIModuleAdapter(proxyChatBot, externalAIModule, "ru")
+                )
         );
 
-        System.out.println("=== Тестирование чат‑бота с Proxy и Decorators ===");
+        System.out.println("=== Тестирование чат‑бота с Proxy, Decorators и Adapter ===");
 
-        // Попытка отправить сообщение без авторизации
-        decoratedBot.sendMessage("привет, ты дурак!");
+
+        decoratedBot.sendMessage("привет, как дела?");
 
         System.out.println("\n--- Авторизация ---");
         proxyChatBot.authorize("secret123"); // Верный пароль
@@ -65,12 +71,11 @@ public class programm {
         System.out.println("\n--- Отправка сообщений после авторизации ---");
         decoratedBot.sendMessage(":)");
         decoratedBot.sendMessage("пока, глупый человек!");
-        decoratedBot.sendMessage("как дела, плохой день?");
+        decoratedBot.sendMessage("что думаешь об этом?");
 
-        // Выводим историю сообщений
         if (decoratedBot instanceof HistoryChatBotDecorator) {
             ((HistoryChatBotDecorator) decoratedBot).printHistory();
-
         }
+
     }
 }
