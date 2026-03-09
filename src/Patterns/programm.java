@@ -4,6 +4,8 @@ import Patterns.Builder.BirdsBuilders;
 import Patterns.Builder.BirdsEngineer;
 import Patterns.Builder.BirdsInterface;
 import Patterns.Chain_of_responsibilities.*;
+import Patterns.Proxy.ChatBot;
+import Patterns.Proxy.SecureChatBotProxy;
 import Patterns.Straregy.*;
 
 public class programm {
@@ -26,7 +28,7 @@ public class programm {
         BirdsEngineer engineer = new BirdsEngineer(builder);
         Birds birds = engineer.createBirds("Kokosik", "Blue", 4);
         System.out.println(birds);
-        //Реализовываем Цепочку обязанностей
+        //Реализовываем Цепочку обязанностей  и Прокси
 
         MessageHandler emojiHandler = new EmojiHandler();
         MessageHandler greetingHandler = new GreetingHandler();
@@ -37,15 +39,22 @@ public class programm {
         greetingHandler.setNext(goodbyeHandler);
         goodbyeHandler.setNext(defaultHandler);
 
+        ChatBot realChatBot = new ChatBot(emojiHandler);
 
-        System.out.println("=== Тестирование чат‑бота ===");
-        emojiHandler.handle(":)");           // Обработает EmojiHandler
-        emojiHandler.handle("привет!");       // Обработает GreetingHandler
-        emojiHandler.handle("пока!");        // Обработает GoodbyeHandler
-        emojiHandler.handle("как дела?");   // Обработает DefaultHandler
-        emojiHandler.handle(":(");           // Обработает EmojiHandler
+        SecureChatBotProxy proxyChatBot = new SecureChatBotProxy(realChatBot);
 
-        //Реализовываем Прокси
+        System.out.println("=== Тестирование чат‑бота с Proxy ===");
+
+        proxyChatBot.sendMessage("привет!");
+
+        System.out.println("\n--- Авторизация ---");
+        proxyChatBot.authorize("wrong_password"); // Неверный пароль
+        proxyChatBot.authorize("secret123");     // Верный пароль
+
+        System.out.println("\n--- Отправка сообщений после авторизации ---");
+        proxyChatBot.sendMessage(":)");
+        proxyChatBot.sendMessage("пока!");
+        proxyChatBot.sendMessage("как дела?");
 
     }
 }
