@@ -1,4 +1,4 @@
-package Workout.BeytsJava.Charter2;
+package Workout.BeytsJava.Charter2.Drum;
 
 public class DrumKit {
     boolean topHat = true;
